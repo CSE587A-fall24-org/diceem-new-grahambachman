@@ -5,6 +5,35 @@ from numpy.typing import NDArray
 from cse587Autils.DiceObjects.Die import Die, safe_exponentiate
 from cse587Autils.DiceObjects.BagOfDice import BagOfDice
 
+experiment_data = [(2,1,9), (3,5,4)]
+# experiment_data = [(2,1,9), (3,5,4)]
+bag_of_dice = BagOfDice([0.45,0.55], [
+    Die(face_probs=[0.1, 0.2, 0.7]),
+    Die(face_probs=[0.25,0.3,0.45])])
+
+# e_step
+prior_Di = bag_of_dice[0][0]
+prior_Dj = bag_of_dice[1][0]
+n_trials = len(experiment_data)
+n_rolls = np.sum(experiment_data)
+n_faces = len(experiment_data[0])
+faces_Di = np.array(bag_of_dice[0][1])
+faces_Dj = np.array(bag_of_dice[1][1])
+joint_Di = np.prod(faces_Di**experiment_data, axis=1)
+joint_Dj = np.prod(faces_Dj**experiment_data, axis=1)
+posterior_Di = joint_Di/(joint_Di+joint_Dj)
+posterior_Dj = 1-posterior_Di
+upd_prior_Di = posterior_Di.sum()/len(posterior_Di)
+upd_prior_Dj = 1-upd_prior_Di
+rolls_per_trial = np.sum(experiment_data, axis=1) # always 12, could compute easier above.
+
+# m_step
+denom = np.sum(rolls_per_trial*posterior_Di)
+numerator = np.sum(np.array(experiment_data).T*posterior_Di)
+upd_faces = numerator / denom
+
+upd_faces
+
 logger = logging.getLogger(__name__)
 
 def diceEM(experiment_data: List[NDArray[np.int_]],  # pylint: disable=C0103
