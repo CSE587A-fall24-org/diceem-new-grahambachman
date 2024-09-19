@@ -61,8 +61,8 @@ def m_step(expected_counts_by_die: NDArray[np.float_]):
     updated_type_1_frequency = np.sum(expected_counts_by_die[0])
     updated_type_2_frequency = np.sum(expected_counts_by_die[1])
     updated_priors = np.sum(expected_counts_by_die, axis=1) / np.sum(expected_counts_by_die)
-    updated_type_1_face_probs = expected_counts_by_die[0] / np.sum(expected_counts_by_die)
-    updated_type_2_face_probs = expected_counts_by_die[1] / np.sum(expected_counts_by_die)
+    updated_type_1_face_probs = expected_counts_by_die[0] / np.sum(expected_counts_by_die[0])
+    updated_type_2_face_probs = expected_counts_by_die[1] / np.sum(expected_counts_by_die[1])
     updated_bag_of_dice = BagOfDice(updated_priors,
                                     [Die(updated_type_1_face_probs),
                                      Die(updated_type_2_face_probs)])
